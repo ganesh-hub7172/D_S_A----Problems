@@ -7,15 +7,18 @@ class Solution:
             if sub in memo:
                 return memo[sub]
 
-            res = []
             if not sub:
                 return [""]
 
+            res = []
             for word in wordSet:
                 if sub.startswith(word):
-                    rest = dfs(sub[len(word):])
-                    for r in rest:
-                        res.append(word + (" " + r if r else ""))
+                    rest_sentences = dfs(sub[len(word):])
+                    for sentence in rest_sentences:
+                        if sentence:
+                            res.append(word + " " + sentence)
+                        else:
+                            res.append(word)
 
             memo[sub] = res
             return res
