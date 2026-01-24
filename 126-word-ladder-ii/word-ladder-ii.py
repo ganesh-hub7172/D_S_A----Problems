@@ -1,4 +1,4 @@
-from collections import defaultdict, deque
+from collections import defaultdict
 
 class Solution:
     def findLadders(self, beginWord, endWord, wordList):
@@ -6,38 +6,39 @@ class Solution:
         if endWord not in wordSet:
             return []
 
-        # Step 1: BFS to build parent graph
         parents = defaultdict(list)
-        level = {beginWord}
+        level = set([beginWord])
         found = False
 
         while level and not found:
             next_level = set()
+
             for word in level:
-                wordSet.discard(word)
+                if word in wordSet:
+                    wordSet.remove(word)
 
             for word in level:
                 for i in range(len(word)):
-                    for c in "abcdefghijklmnopqrstuvwxyz":
+                    for c in 'abcdefghijklmnopqrstuvwxyz':
                         new_word = word[:i] + c + word[i+1:]
                         if new_word in wordSet:
-                            next_level.add(new_word)
                             parents[new_word].append(word)
+                            next_level.add(new_word)
                             if new_word == endWord:
                                 found = True
+
             level = next_level
 
-        # Step 2: DFS to build paths
         res = []
 
-        def dfs(word, path):
+        def backtrack(word, path):
             if word == beginWord:
                 res.append(path[::-1])
                 return
             for p in parents[word]:
-                dfs(p, path + [p])
+                backtrack(p, path + [p])
 
         if found:
-            dfs(endWord, [endWord])
+            backtrack(endWord, [endWord])
 
         return res
